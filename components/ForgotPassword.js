@@ -9,7 +9,7 @@ import {  Container,Header,Body,CheckBox,Title,Card,
     Col,Button,Icon, Subtitle,Form, Item, Input,Label,Row,Toast,Root,Thumbnail,
     Picker} from 'native-base';
 
-class Login extends Component{
+class ForgotPassword extends Component{
     
     constructor(){
         super()
@@ -49,16 +49,6 @@ class Login extends Component{
         }
     }
 
-    forgotPasswordHandler = () =>{
-        if(!this.props.route){
-            this.props.navigation.navigate('ForgotPassword');
-        }
-
-        else{
-            this.props.route('ForgotPassword');
-        }
-    }
-
     
     
   
@@ -82,21 +72,15 @@ class Login extends Component{
                                 <Label>Password</Label>
                                 <Input secureTextEntry style={{color:'#fff'}} />
                             </Item>
-
+                            <Item inlineLabel last>
+                                <Label>Password Confirmation</Label>
+                                <Input secureTextEntry style={{color:'#fff'}} />
+                            </Item>
                             <View style={{marginTop:50}}>
                                 <Button rounded primary onPress={this.loginHandler} style={{width:'100%',backgroundColor:'#00CCFF'}}>
-                                    <Text style={{width: '100%',textAlign: 'center',color:'#fff',fontSize:20}}>Login</Text>
+                                    <Text style={{width: '100%',textAlign: 'center',color:'#fff',fontSize:20}}>Reset Password</Text>
                                 </Button>
-                            </View>
-
-                            <View style={{width:'100%',alignItems:'center',marginTop:10}}>
-                                <TouchableOpacity onPress={this.forgotPasswordHandler}>
-                                    <Text style={{color:'#fff'}}>Forgot Password ?</Text>
-                                </TouchableOpacity>
-                            </View>
-                            
-
-                            
+                            </View>                
                         </Form>
                     </Content>
                     <View style={{position:'absolute',bottom:0,alignItems:'center',width:'100%',marginBottom:10}}>
@@ -107,9 +91,6 @@ class Login extends Component{
                             </TouchableOpacity>
                         </Row>
                     </View>
-
-                    
-
                 </Container>
             );
 
@@ -126,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default ForgotPassword;

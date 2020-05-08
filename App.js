@@ -5,7 +5,7 @@ import {
   Text, 
   View,
    } from 'react-native';
-   import {Container, Header, Content} from 'native-base';
+   import {Container} from 'native-base';
 import Route from './components/Route';
 import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';

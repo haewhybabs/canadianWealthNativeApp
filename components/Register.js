@@ -9,7 +9,7 @@ import {  Container,Header,Body,CheckBox,Title,Card,
     Col,Button,Icon, Subtitle,Form, Item, Input,Label,Row,Toast,Root,Thumbnail,
     Picker} from 'native-base';
 
-class Login extends Component{
+class Register extends Component{
     
     constructor(){
         super()
@@ -38,30 +38,10 @@ class Login extends Component{
         this.setState({timePassed: true});
     }
 
-    registerHandler = () =>{
-
-        if(!this.props.route){
-            this.props.navigation.navigate('Register');
-        }
-
-        else{
-            this.props.route('Register');
-        }
+    loginHandler = () => {
+        this.props.navigation.navigate('Login');
     }
 
-    forgotPasswordHandler = () =>{
-        if(!this.props.route){
-            this.props.navigation.navigate('ForgotPassword');
-        }
-
-        else{
-            this.props.route('ForgotPassword');
-        }
-    }
-
-    
-    
-  
     render(){
 
        
@@ -70,10 +50,14 @@ class Login extends Component{
                     <Content>
                         <View style={{width:'100%',alignItems:'center'}}>
                             <Image source={require('../assets/canadian-wealth.png')}
-                                style={{width:300,height:50,marginTop:180}}
+                                style={{width:300,height:50,marginTop:80}}
                             />
                         </View>              
                         <Form style={{marginTop:50,marginLeft:15,marginRight:15}}>
+                            <Item inlineLabel last>
+                                <Label>Full Name</Label>
+                                <Input style={{color:'#fff'}} />
+                            </Item>
                             <Item inlineLabel last>
                                 <Label>Email</Label>
                                 <Input style={{color:'#fff'}} />
@@ -82,28 +66,26 @@ class Login extends Component{
                                 <Label>Password</Label>
                                 <Input secureTextEntry style={{color:'#fff'}} />
                             </Item>
-
+                            <Item inlineLabel last>
+                                <Label>Password Confirmation</Label>
+                                <Input secureTextEntry style={{color:'#fff'}} />
+                            </Item>
+                            <Item inlineLabel last>
+                                <Label>Phone Number</Label>
+                                <Input style={{color:'#fff'}} />
+                            </Item>
                             <View style={{marginTop:50}}>
                                 <Button rounded primary onPress={this.loginHandler} style={{width:'100%',backgroundColor:'#00CCFF'}}>
-                                    <Text style={{width: '100%',textAlign: 'center',color:'#fff',fontSize:20}}>Login</Text>
+                                    <Text style={{width: '100%',textAlign: 'center',color:'#fff',fontSize:20}}>Register</Text>
                                 </Button>
-                            </View>
-
-                            <View style={{width:'100%',alignItems:'center',marginTop:10}}>
-                                <TouchableOpacity onPress={this.forgotPasswordHandler}>
-                                    <Text style={{color:'#fff'}}>Forgot Password ?</Text>
-                                </TouchableOpacity>
-                            </View>
-                            
-
-                            
+                            </View>       
                         </Form>
                     </Content>
                     <View style={{position:'absolute',bottom:0,alignItems:'center',width:'100%',marginBottom:10}}>
                         <Row>
-                            <Text style={{marginLeft:10, marginTop:10,color:'#fff'}}>You don't have an account?</Text>
-                            <TouchableOpacity onPress={this.registerHandler} >
-                                <Text style={{marginLeft:10, marginTop:10,color:'#e83e8c'}}>Register here</Text>
+                            <Text style={{marginLeft:10, marginTop:10,color:'#fff'}}>Already have an account?</Text>
+                            <TouchableOpacity onPress={this.loginHandler} >
+                                <Text style={{marginLeft:10, marginTop:10,color:'#e83e8c'}}>Login here</Text>
                             </TouchableOpacity>
                         </Row>
                     </View>
@@ -126,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Register;

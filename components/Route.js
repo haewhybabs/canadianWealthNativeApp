@@ -9,6 +9,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer} from 'react-navigation';
 import { createDrawerNavigator,DrawerItems } from 'react-navigation-drawer';
 import Splash from './Splash';
+import Register from './Register';
+import Login from './Login';
+import ForgotPassword from './ForgotPassword';
 import{Container,Content,Header,Body} from 'native-base';
 
 
@@ -49,7 +52,38 @@ const screens = {
                 drawerLockMode:'locked-closed'
             }
         }
-    }
+    },
+    Login: {
+        screen: Login,
+        header: null,
+        navigationOptions:({navigation}) =>{
+            return {
+                drawerLabel: ()=> null,
+                drawerLockMode:'locked-closed'
+            }
+        }
+    },
+    Register: {
+        screen: Register,
+        header: null,
+        navigationOptions:({navigation}) =>{
+            return {
+                drawerLabel: ()=> null,
+                drawerLockMode:'locked-closed'
+            }
+        }
+    },
+
+    ForgotPassword: {
+        screen: ForgotPassword,
+        header: null,
+        navigationOptions:({navigation}) =>{
+            return {
+                drawerLabel: ()=> null,
+                drawerLockMode:'locked-closed'
+            }
+        }
+    },
 
 }
 const CustomDrawerContentComponent = props =>(
