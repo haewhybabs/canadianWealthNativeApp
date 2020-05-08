@@ -9,6 +9,9 @@ import {  Container,Header,Body,CheckBox,Title,Card,
     Col,Button,Icon, Subtitle,Form, Item, Input,Label,Row,Toast,Root,Thumbnail
    } from 'native-base';
     import {apiUrl} from '../Config';
+import {bindActionCreators} from 'redux';
+import {saveUserDetailsAction} from '../redux/actions';
+import {connect} from 'react-redux';
 class Register extends Component{
     
     constructor(){
@@ -129,10 +132,21 @@ class Register extends Component{
                         buttonText:'Okay',
                         style:{backgroundColor:'red'}
                         
-                    })
-                    
+                    })  
                 }
                 else{
+                    AsyncStorage.setItem('userDetails',
+                    JSON.stringify({
+                        name:contents.data.name,
+                        email:contents.data.email,
+                    }));
+
+                    this.props.saveUserDetailsAction({
+
+                        token:contents.token
+
+                    });
+                    
                     Toast.show({
                         text:'Success!!',
                         buttonText:'Okay',
@@ -143,10 +157,6 @@ class Register extends Component{
                         this.props.navigation.navigate('Profile');
                     },3000);
                 }
-                    
-                    
-                    
-               
             })
             .catch((error)=>{
                 this.errorInConnection();
@@ -154,8 +164,6 @@ class Register extends Component{
                     password_confirmation:'',
                     password:''
                 })
-
-                
             })
         
         }
@@ -323,4 +331,20 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+const mapStateToProp = (state) =>{
+
+    return {
+        user:state.user
+    }
+
+    
+}
+
+const mapActionstoProps = (dispatch) => {
+    return bindActionCreators({
+        saveUserDetailsAction
+    },dispatch)
+}
+
+
+export default connect(mapStateToProp,mapActionstoProps)(Register);
