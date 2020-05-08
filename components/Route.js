@@ -12,6 +12,7 @@ import Splash from './Splash';
 import Register from './Register';
 import Login from './Login';
 import ForgotPassword from './ForgotPassword';
+import Profile from './Profile';
 import{Container,Content,Header,Body} from 'native-base';
 
 
@@ -85,12 +86,22 @@ const screens = {
         }
     },
 
+    Profile: {
+        screen: Profile,
+        header: null,
+        navigationOptions:({navigation}) =>{
+            return {
+                title:'Profile'
+            }
+        }
+    }
+
 }
 const CustomDrawerContentComponent = props =>(
     <Container>
         <Header style={{height:200,backgroundColor:'#fff'}}>
             <Body>
-                <Image style={styles.drawerImage} source = {require('../assets/canadianLogo.jpg')}/>
+                <Image style={styles.drawerImage} source = {require('../assets/canadian-wealth.png')}/>
             </Body>
             
         </Header>
@@ -113,8 +124,8 @@ const Navigator = createAppContainer(HomeStack);
 const styles = StyleSheet.create({
     
     drawerImage:{
-        height:30,
-        width:150,
+        height:40,
+        width:200,
         borderRadius:75
     }
   });

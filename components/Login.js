@@ -58,6 +58,18 @@ class Login extends Component{
             this.props.route('ForgotPassword');
         }
     }
+    
+    loginHandler = () =>{
+
+        if(!this.props.route){
+            this.props.navigation.navigate('Profile');
+        }
+
+        else{
+            this.props.route('Profile');
+        }
+    }
+
 
     
     
