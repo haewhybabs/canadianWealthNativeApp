@@ -1,6 +1,5 @@
 # canadianWealthNativeApp
-
-# canadianWealthNodeTestApi    
+ 
 ## Installation
 ###React Native Application with the following operations
 *Registration
