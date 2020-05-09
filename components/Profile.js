@@ -2,46 +2,296 @@ import React,{Component} from 'react';
 import { 
   StyleSheet,
   Image,
-  Text,View,TouchableOpacity,StatusBar,Platform,
+  Text,View,TouchableOpacity,StatusBar,Platform,ActivityIndicator
    } from 'react-native';
 import {  Container,Header,Body,CheckBox,Title,Card,
     CardItem,Left,Right,Content,Grid,
     Col,Button, Subtitle,Form, Item, Input,Label,Row,Toast,Root,Thumbnail,Icon,Footer,FooterTab,
     Picker} from 'native-base';
-
+import {apiUrl} from '../Config';
+import {bindActionCreators} from 'redux';
+import {saveUserDetailsAction} from '../redux/actions';
+import {connect} from 'react-redux';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
 const MyStatusBar = ({backgroundColor, ...props}) => (
     <View style={[styles.statusBar, { backgroundColor }]}>
         <StatusBar translucent backgroundColor={backgroundColor} {...props} />
     </View>
     );
+const options = {
+    title:'Select a photo',
+    takePhotoButtonTitle:'Take a photo',
+    chooseFromLibraryButtonTitle:'Choose from gallery',
+    quality:1
+}
 
 class Profile extends Component{
     
     
-    constructor(){
-        super()
+    constructor(props){
+        super(props)
 
         this.state = {
-            dataSource:[],
+            
             isLoading:true,
-            userdetails:[],
-            timePassed:false
+            userInfo:"",
+            name:props.navigation.getParam('name'),
+            phoneNumber:props.navigation.getParam('phoneNumber'),
+            imageSource:"",
+            imageData:null,
+            image:null,
+            userToken:[]
+            
         }
   
        
     }
-
-    componentDidMount() {
-       
-        this.setState({ loading: false })
-        
+    
+    componentWillReceiveProps(props){
+        this.setState({
+            name:props.navigation.getParam('name'),
+            phoneNumber:props.navigation.getParam('phoneNumber'),
+            image:props.navigation.getParam('image')
+        })
     }
     
+    logoutHandler =() =>{
+        let token = "";
+
+        this.props.saveUserDetailsAction({
+
+            token,
+            loggedIn:false
+
+        });
+        this.props.navigation.navigate('Login')
+    }
+
+    componentDidMount() {
+        console.log('mount');
+        let loggedInStatus = this.props.user.loggedIn;
+        if(loggedInStatus == false){
+            this.props.navigation.navigate('Login');
+        }
+        let user = this.props.user
+        
+
+        fetch(apiUrl+'profile',{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization':user.token
+            }
+            
+        })
+        .then(response => {
+                                
+            return response.json();      
+        })
+        
+        .then((contents)=>{
+
+            console.log(contents);
+            
+            
+            this.setState({
+
+                userInfo:contents.data,
+                name:contents.data.name,
+                phoneNumber:contents.data.phoneNumber,
+                isLoading:false,
+                image:contents.data.image
+
+            });
+        })
+        .catch((error)=>{
+            
+            this.errorInConnection();
+        })
+        
+    }
+
+    errorInConnection = () => {
+        this.hideLoader();
+
+        Toast.show({
+            text:'Ops!! Connection Problem',
+            buttonText:'Okay',
+            style:{backgroundColor:'red'}
+            
+        })
+    }
+    showLoader = () => {
+        this.setState({isLoading:true})
+    }
+
+    hideLoader = () =>{
+        this.setState({isLoading:false})
+    }
+
+    profileUpdateHandler =()=>
+    {
+        let state = this.state;
+        let user = this.props.user;
+        if(state.phoneNumber !="" && state.name !="")
+        {
+            this.showLoader();
+
+            fetch(apiUrl+'profile/update',{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization':user.token
+            },
+            body: JSON.stringify({
+                    
+                name: state.name,
+                phoneNumber: state.phoneNumber,
+                
+            })
+            
+            })
+            .then(response => {
+                                    
+                return response.json();      
+            })
+            
+            .then((contents)=>{
+                
+                
+                this.setState({
+
+                    userInfo:contents.data,
+                    name:contents.data.name,
+                    phoneNumber:contents.data.phoneNumber,
+                    isLoading:false,
+                    image:contents.data.image
+
+                });
+
+                Toast.show({
+                    text:'success',
+                    buttonText:'Okay',
+                    style:{backgroundColor:'green'}
+                    
+                })
+            })
+            .catch((error)=>{
+                
+                this.errorInConnection();
+            })
+        }
+    }
+    
+
+    selectPhoto = async() =>
+    {
+        ImagePicker.showImagePicker({noData:true,mediaType:'photo'}, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } 
+            else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }else {
+                let source ={uri:response.uri}
+                this.showLoader()
+                this.uploadImage(response)
+              
+                // RNFetchBlob.fetch('POST', "https://canadianwealthapp.herokuapp.com/profile/upload", {
+                //     // Authorization : "Bearer access-token",
+                //     Authorization:this.props.user.token,
+                //    }, [
+            
+                //     { name : 'profileImage', filename :'hj.png', data: RNFetchBlob.wrap(response.path)},
+                //     // { name : 'profileImage', filename :"imageo.png", data:response.data},
+                    
+                    
+                // ]).then((resp) => {
+                //     this.hideLoader();
+                //     console.log('upload data  : ' +resp.text())
+                   
+                //     Toast.show({
+                //         text:'success',
+                //         buttonText:'Okay',
+                //         style:{backgroundColor:'green'}
+                        
+                //     });
+
+                    
+
+                //     this.setState({
+                //         imageSource: response.uri,
+                //         image:resp.data.image
+                //     });
+                //     // ...
+                // }).catch((err) => {
+                //     console.log('error: ' + err)
+                // })
+            }
+        });
+    }
+
+    uploadImage = async (response) =>{
+        
+        const baseUrl = apiUrl +'profile/upload';
+        const uploadData = new FormData();
+        uploadData.append('profileImage',{type:response.type, uri:response.uri,name:response.fileName})
+        fetch(baseUrl, {
+            method:'post',
+            headers: {
+                Authorization:this.props.user.token,  
+            },
+            body:uploadData
+            
+        })
+        .then(response => {
+            return response.json();
+        })   
+        .then((contents)=>{
+
+            console.log('Response :' + contents)
+            
+            this.hideLoader()
+            
+            this.setState({
+
+                userInfo:contents.data,
+                name:contents.data.name,
+                phoneNumber:contents.data.phoneNumber,
+                isLoading:false,
+                image:contents.data.image
+
+            });
+
+            Toast.show({
+                text:'success',
+                buttonText:'Okay',
+                style:{backgroundColor:'green'}
+                
+            })
+        })
+        .catch((error)=>{ 
+            this.errorInConnection();
+        })
+    }
+
   
     render(){
+        
+    
        
             return (  
-                <Container style={{backgroundColor:'#fff'}}>
+                this.state.isLoading
+                ?
+                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                    <ActivityIndicator size="large" color="#00CCFF" animating  />
+                </View>
+                :
+                <Root>
+                    <Container style={{backgroundColor:'#fff'}}>
                     <MyStatusBar backgroundColor="#0F1C44" barStyle="light-content" />
                     <Content>
                         <View style={{backgroundColor:'#0F1C44',width:'100%',height:200}}>
@@ -52,10 +302,14 @@ class Profile extends Component{
                         
                             <View style={{width:'100%',alignItems:'center',marginTop:20}}>
                                 <Thumbnail
-                                    source = {require('../assets/finebabe.png')}
-                                    scaleX={2} scaleY={2}         
+                                    source = {this.state.image != null ? {uri:apiUrl+this.state.image}:
+                                         require('../assets/noImage.png')}
+                                    scaleX={2} scaleY={2}
+                                    style={{width:50, height:50, borderRadius:50/2}}      
                                 />
-                                <Text style={{marginTop:40,color:'#fff',fontSize:20}}>Change Profile Picture</Text>
+                                <TouchableOpacity onPress={()=>this.selectPhoto()}>
+                                    <Text style={{marginTop:40,color:'#fff',fontSize:20}}>Change Profile Picture</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -66,20 +320,20 @@ class Profile extends Component{
                             <Card style={{marginTop:20}}>
                                 <CardItem>
                                     <Icon active name="man" style={{color:'#00CCFF'}}/>
-                                    <Input value="Ayobami Babalola"/>
+                                    <Input value={this.state.name} onChangeText={(name)=>this.setState({name})}/>
                                 </CardItem>
                             </Card>
 
                             <Card style={{marginTop:20}}>
                                 <CardItem>
                                     <Icon active name="phone-portrait" style={{color:'#00CCFF'}}/>
-                                    <Input value="08135373563"/>
+                                    <Input value={this.state.phoneNumber} onChangeText={(phoneNumber)=>this.setState({phoneNumber})}/>
                                     
                                 </CardItem>
                             </Card>
 
                             <View style={{marginTop:50}}>
-                                <Button rounded primary onPress={this.loginHandler} style={{width:'100%',backgroundColor:'#00CCFF'}}>
+                                <Button rounded primary onPress={this.profileUpdateHandler} style={{width:'100%',backgroundColor:'#00CCFF'}}>
                                     <Text style={{width: '100%',textAlign: 'center',color:'#fff',fontSize:20}}>Update</Text>
                                 </Button>
                             </View>
@@ -88,18 +342,19 @@ class Profile extends Component{
 
                     <Footer>
                         <FooterTab  style={{backgroundColor:'#0F1C44'}}>
-                            <Button vertical onPress={this.DashboardHandler}>
+                            <Button vertical>
                                 <Icon name="person" />
                                 <Text style={{color:'#fff'}}>Profile</Text>
                             </Button>
                             
-                            <Button vertical onPress={this.ProfileHandler}>
+                            <Button vertical onPress={this.logoutHandler}>
                                 <Icon name="log-out" />
                                 <Text style={{color:'#fff'}}>Logout</Text>
                             </Button>
                         </FooterTab>
                     </Footer>
                 </Container>
+                </Root>
             );
 
         
@@ -133,4 +388,20 @@ const styles = StyleSheet.create({
 
 
 
-export default Profile;
+const mapStateToProp = (state) =>{
+
+    return {
+        user:state.user
+    }
+
+    
+}
+
+const mapActionstoProps = (dispatch) => {
+    return bindActionCreators({
+        saveUserDetailsAction
+    },dispatch)
+}
+
+
+export default connect(mapStateToProp,mapActionstoProps)(Profile);

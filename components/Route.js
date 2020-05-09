@@ -11,6 +11,7 @@ import { createDrawerNavigator,DrawerItems } from 'react-navigation-drawer';
 import Splash from './Splash';
 import Register from './Register';
 import Login from './Login';
+
 import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
 import{Container,Content,Header,Body} from 'native-base';
@@ -88,13 +89,28 @@ const screens = {
 
     Profile: {
         screen: Profile,
-        header: null,
-        navigationOptions:({navigation}) =>{
+        navigationOptions: ({navigation}) => {
+
             return {
-                title:'Profile'
+                title: 'Profile',
+                headerTitleStyle:{
+                    color:'white'
+                },
+                headerBackTitle: null,
+                headerStyle: {
+                    backgroundColor: '#007bff',
+                    
+                },
+
+                
+
             }
-        }
-    }
+            
+
+
+        },
+    },
+    
 
 }
 const CustomDrawerContentComponent = props =>(

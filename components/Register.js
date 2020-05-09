@@ -143,7 +143,8 @@ class Register extends Component{
 
                     this.props.saveUserDetailsAction({
 
-                        token:contents.token
+                        token:contents.token,
+                        loggedIn:true,
 
                     });
                     
@@ -151,11 +152,11 @@ class Register extends Component{
                         text:'Success!!',
                         buttonText:'Okay',
                         style:{backgroundColor:'green'},
-                        duration:3000       
+                        duration:1000       
                     })
-                    setTimeout( () => {
-                        this.props.navigation.navigate('Profile');
-                    },3000);
+                   
+                    this.props.navigation.navigate( 'Profile',contents.data,contents.data.id);
+                    
                 }
             })
             .catch((error)=>{
@@ -194,7 +195,7 @@ class Register extends Component{
                 
                 this.setState({
 
-                    emailError:'Email not valid'
+                    emailError:'Email is not yet valid'
                 })
             }
             else{

@@ -25,8 +25,18 @@ class Login extends Component{
   
        
     }
+    
 
     componentDidMount() {
+
+        console.log('yes');
+
+        let user = this.props.user;
+        if(user.loggedIn){
+          
+                this.props.navigation.navigate('Profile');
+           
+        }
        
         this.setState({ isLoading: false })
         
@@ -42,23 +52,15 @@ class Login extends Component{
 
     registerHandler = () =>{
 
-        if(!this.props.route){
+        
             this.props.navigation.navigate('Register');
-        }
-
-        else{
-            this.props.route('Register');
-        }
+       
     }
 
     forgotPasswordHandler = () =>{
-        if(!this.props.route){
+       
             this.props.navigation.navigate('ForgotPassword');
-        }
-
-        else{
-            this.props.route('ForgotPassword');
-        }
+     
     }
 
     errorInConnection = () => {
@@ -100,17 +102,26 @@ class Login extends Component{
             .then((contents)=>{
 
                 this.hideLoader();
+
+                if(contents == 'Unauthorized')
+                {
+                    console.log('unauthorized')
+                }
                 
                 if(contents.status){
                     AsyncStorage.setItem('userDetails',
                     JSON.stringify({
                         name:contents.data.name,
                         email:contents.data.email,
+                        image:contents.data.image,
+                        phoneNumber:contents.data.phoneNumber,
+                        id:contents.data.id
                     }));
 
                     this.props.saveUserDetailsAction({
 
-                        token:contents.token
+                        token:contents.token,
+                        loggedIn:true,
 
                     });
                     
@@ -120,16 +131,13 @@ class Login extends Component{
                         style:{backgroundColor:'green'},
                         duration:3000       
                     })
-                    setTimeout( () => {
-                                  
-                        if(!this.props.route){
-                            this.props.navigation.navigate('Profile');
-                        }    
-                        else{
-                            this.props.route('Profile');
-                        }
                     
-                    },2000); 
+                                  
+                       
+                    this.props.navigation.navigate( 'Profile',contents.data,contents.data.id);
+                      
+                    
+                    
                 }
                 else{
                     Toast.show({

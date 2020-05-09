@@ -53,7 +53,7 @@ class Splash extends Component{
             );
 
         } else {
-            return <Login route={this.props.navigation.navigate}/>;
+            return <Login navigation={this.props.navigation}/>;
         }
 
     
