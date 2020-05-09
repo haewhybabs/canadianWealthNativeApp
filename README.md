@@ -1,12 +1,13 @@
 # canadianWealthNativeApp
  
 ## Installation
+
 ###React Native Application with the following operations
-*Registration
-*Full Authentication
-*Image Upload
-*Password Reset
-*Profile Update
+* Registration
+* Full Authentication
+* Image Upload
+* Password Reset
+* Profile Update
 
 API: https://canadianwealthapp.herokuapp.com/
 
