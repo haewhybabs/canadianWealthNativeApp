@@ -1,6 +1,6 @@
 # canadianWealthNativeApp
  
-## Installation
+## Introduction
 
 ###React Native Application with the following operations
 * Registration
@@ -10,7 +10,7 @@
 * Profile Update
 
 API: https://canadianwealthapp.herokuapp.com/
-
+## Installation
 follow the following commands to get it started:
 
 * git clone https://github.com/haewhybabs/canadianWealthNativeApp.git
